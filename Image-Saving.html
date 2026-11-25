@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/png" href="images/title.png">
+        <title>Image Saving - Como usar</title>
+
+    </head>
+
+    <body style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
+        <div id="title">
+            <h1 style="color: white;">Image Saving -<br> Como usar</h1>
+        </div>
+        <div class="Indice">
+        <h3>Índice</h3>
+        <ul>
+            <li><a href="#Para">¿Para qué sirve este kit?</a></li>
+            <br>
+            <li><a href="#Lim">Limitaciones</a></li>
+            <br>
+            <li><a href="#Scr">Scripts</a></li>
+            <br>
+            <li><a href="#Ejemplo">Ejemplo completo</a></li>
+            <br>
+            <li><a href="#Res">Nombres reservados</a></li>
+        </ul>
+        </div>
+
+        <div id="Para">
+            <h3>¿Para qué sirve este kit?</h3>
+            <p>Busca ayudar a implementar de manera rápida el guardado y la carga de pixel arts sencillos 
+                para tus juegos, convirtiendo el dibujo en una cadena que se guarda dentro de 16 variables de guardado como máximo.
+            </p>
+        </div>
+        <div id="Lim"></div>
+            <h3>Limitaciones:</h3>
+            <p>Las obras guardadas solo pueden tener 2 tamaños pre definidos y una paleta de 8 colores como máximo.</p>
+            
+            <img src="Images/Editor UI.jpg" class="Vertical">
+
+            <p>Además, como Fancade solo tiene 64 variables de guardado disponibles por juego, tendrás que medir 
+                cuántos slots de cada tipo puedes usar. En el caso de solo usar imágenes 8x14, tienes un máximo de 4 slots, en caso de usar solo de 8x8, tienes hasta 6 slots disponibles
+            </p>
+        </div>
+        <div id="Scr">
+            <h3>Scripts: </h3>
+            <p>En el kit están incluidas 2 variantes de los scripts. 
+                Se encuentran separadas por que se diseñaron para un tamaño específico de imagen.<br><br>
+                Para distinguir uno de otro, hay 2 pixeles de colores que representan las dimensiones 
+                de la imagen que procesan y un dibujo en la parte posterior.
+            </p>
+
+            <img src="Images/Type_Guide-1.jpg" class="Horizontal"><img src="Images/Type_Guide-2.jpg" class="Horizontal">
+
+            <b>Los scripts que contiene el kit son:</b>
+            <ul>
+                <li><b>Image Editor UI:</b> Abre el editor de pixel art y cuando se termina de dibujar, devuelve una lista con la imagen. Puede recibir de entrada un color de fondo predeterminado.
+                    <br> <img src="Images/Editor.jpg" class="Square"><br>
+                    La lista "Image" que devuelve tiene tantos elementos como pixeles la imagen (contando los transparentes) + 8 variables de la paleta de colores.
+                </li>
+                <br>
+                <li><b>Image To String:</b> Permite convertir una lista de imagen en una mas óptima para guardar y cargar datos.
+                    <br><img src="Images/Image To String.jpg" class="Square"><br>
+                    Su única salida es la lista "String" que tiene un tamaño 16 para imágenes de 8x14 y tamaño 10 para imágenes de 8x8.
+                </li>
+                <br>
+                <li><b>String To Image:</b> Hace exactamente lo mismo que Image To String pero al revés, devolviendo una lista "Image"
+                    <br><img src="Images/String To Image.jpg" class="Square">
+                </li>
+                <br>
+                <li><b>Save String 1/2/3/..:</b> Guarda cada elemento de una lista de string en una variable de guardado y tiene una variante por cada posible slot de la imagen.
+                    <br><img src="Images/Save 1.jpg" class="Square"><img src="Images/Save 2.jpg" class="Square"> </li>
+                <br>
+                <li><b>Load String 1/2/3..:</b> Carga cada variable de guardado de su slot correspondiente en una lista "String" que devuelve como salida.
+                    <br><img src="Images/Load 1.jpg" class="Square">
+                </li>
+                <br>
+                <li><b>Image To Object: </b>A partir de una lista image, construye un pixel art que sigue a un unico pivote. Este script te devuelve tanto el object que representa al pivote, como una list con los pixeles de la imagen
+                    <br><img src="Images/Image To Object.jpg" class="Square"><br>
+                    El tamaño de la lista de pixeles, es el mismo que el de la lista de entrada, pero restandole los 8 espacios que ocupa la paleta de colores.
+                </li>
+                <br>
+                <li><b>Update Pos: </b>Este script, a partir de un pivote válido otorgado por Image To OBject, actualiza la posición y rotación de la lista de pixeles para seguir a las del pivote.
+                    <br><img src="Images/Update Pos.jpg" class="Square">
+                </li>
+            </ul>
+        </div>
+        <div id="Ejemplo">
+            <h3>Ejemplo completo:</h3>
+            <p>A continuación, se mostrará una forma sencilla de implementar el kit con su funcion mas básica: guardar el dibujo de un jugador y despues cargarlo en otro nivel.
+                <br>(Que es precisamente el ejemplo mostrado en los niveles "Example" y "Saved Example")
+            </p>
+            <br>
+            <ol>
+                <li><b>Guardar: </b>
+                    <br><img src="Images/Save_Example.jpg" class="Square"><br>
+                    En el nivel donde se creará el pixel art, construiremos este flujo sencillo, donde tras terminar el dibujo, la imagen resultante se convertirá a string, el string se guardará y el nivel acabará.
+                </li>
+                <br>
+                <li><b>Cargar: </b>
+                    <br><img src="Images/Load_Example.jpg" class="Square"><br>
+                    Ahora, en el nivel donde se cargará el dibujo anterior, se recuperará con un Load String del mismo slot donde guardamos el string (en este caso slot 1).
+                    <br>Posteriormente, se convierte con String To Image, creamos los objetos con Image To Object y finalmente, para posicionarlo, movemos el pivote con un Set Position y lo actualizamos con Update Pos.
+                </li>
+            </ol>
+        </div>
+        <div id="Res">
+            <h3>Nombres reservados</h3>
+            <p>Este kit, utiliza algunas variables globales, y obviamente variables de guardado cuyos nombres y tipos se mencionarán brevemente aquí para evitar accidentes:</p>
+            <ul translate="no">
+                <li>$ImgObjManage - Object</li>
+                <br>
+                <li>$ImgObjManCount - Num</li>
+                <br>
+                <li>$ImgObjManType - Num</li>
+            </ul>
+            <p>Para las variables de guardado, se utilizan nombres con la estructura: "!SDNXSY" Donde "Y" representa el slot en el que se guarda y "X" el espacio dentro de ese slot. Si se usa la versión para imágenes 8x8, habra una "B" al final ("!SDNXSYB")</p>
+        </div>
+        <br>
+        <br>
+        <div id="Pie">
+            <h3 style="color: white;">¡Gracias por leer! Espero que este kit te sea de utilidad para algún proyecto que tengas en mente, a pesar de sus limitaciones...
+            <br>¡Diviertete creando! :D
+            </h3>
+            <b style="color: white;">— Elmini/Juegos Random</b>
+        </div>
+    </body>
+</html>

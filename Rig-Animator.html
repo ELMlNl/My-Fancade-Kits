@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/png" href="images/title.png">
+        <title>Rig Animator - Como usar</title>
+
+    </head>
+
+    <body style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: linear-gradient(white 80%, #FED6D7 100%);">
+        <div id="title" style="background: linear-gradient(#DC2626, #B91C1C);">
+            <h1 style="color: white;">Rig Animator -<br> Como usar</h1>
+        </div>
+        <div class="Indice" style="background: linear-gradient(#DC2626, #B91C1C);">
+        <h3>Índice</h3>
+        <ul>
+            <li><a href="#Para">¿Para qué sirve este kit?</a></li>
+            <br>
+            <li><a href="#Lim">Limitaciones</a></li>
+            <br>
+            <li><a href="#Scr">Scripts</a></li>
+            <br>
+            <li><a href="#Ejemplo">Ejemplo guiado</a></li>
+            <br>
+            <li><a href="#Res">Nombres reservados</a></li>
+        </ul>
+        </div>
+
+        <div id="Para">
+            <h3>¿Para qué sirve este kit?</h3>
+            <p>Tiene como objetivo facilitar la implementacion de animaciones por uniones de objetos y fotogramas clave, almacenando sus estructuras en variables que permiten reutilizar esqueletos, animaciones y fotogramas clave.
+            </p>
+        </div>
+        <div id="Lim"></div>
+            <h3>Limitaciones:</h3>
+            <p>Las estructuras del Kit presentan limitaciones de capacidad debido a la forma en que se almacenan sus datos. Estas son las siguientes:</p>
+            <ul>
+                <li>
+                    <b>Armature:</b> Puede contener un máximo de 50 uniones de objetos (<b>Joints</b>).
+                </li>
+                <br>
+                <li>
+                    <b>Keyframe:</b> Debido a que un <b>Armature</b> puede contener hasta 50 uniones, cada <b>Keframe</b> puede almacenar un máximo de 50 rotaciones y posiciones correspondientes.          
+                </li>
+                <br>
+                <li><b>Animation:</b> Puede almacenar un máximo de 100 <b>Keyframes</b>. <br>
+                    Sumado a esto, debe de contener como mínimo 2 <b>Keyframes</b> y que la suma de sus tiempos de duración sea mayor a 1/30 segundos (aproximadamente 0.0333).
+                </li>
+                <br>
+                <li><b>Animation Controller:</b> Este es un caso especial, pues únicamente cuando se utiliza dentro de un bucle para animar varios <b>Armatures</b> simultaneamente, puede gestionar un máximo de 50 <b>Armatures</b>
+            </ul>
+        </div>
+
+
+        <div id="Scr">
+            <h3>Scripts: </h3>
+            <p>Este kit contiene múltiples scripts que separaremos según su funcion.
+            </p>
+            <b>Scripts de Creación:</b>
+            <br> <img src="Images/Anim-CreationScripts.jpeg" class="Square"><br>
+            <ul>
+                <li><b>Create Joint:</b> Crea una unión entre dos objetos. Recibe 
+                    un <b>Joint</b> padre (o -1 si se trata del <b>Joint</b> raíz), 
+                    el objeto hijo y la posición global del pivote de unión. Devuelve una estructura <b>Joint</b>.
+                </li>
+                <br>
+                <li><b>Create Armature:</b> Recibe una lista de <b>Joints</b> 
+                    y devuelve una estructura <b>Armature</b>. Es indispensable para utilizar el sistema de animación, 
+                    ya que es el objeto animable del Kit.
+                </li>
+                <br>
+                <li><b>Create Keyframe:</b> Recibe dos listas de posiciones y rotaciones,
+                     que de preferencia deben tener el mismo tamaño que el arreglo de <b>Joints</b>
+                     del <b>Armature</b> que se piensa animar y sus índices corresponder a los <b>Joints</b>.
+                      Devuelve una estructura <b>Keyframe</b>.
+                </li>
+                <br>
+                <li><b>Create Animation:</b> Recibe una lista de <b>Keyframes</b> y devuelve una estructura <b>Animation</b> con la secuencia de fotogramas clave.
+                </li>
+                <br>
+                <li><b>Anim Controller:</b> Genera un <b>Controller</b>
+                     encargado de gestionar la ejecución de una animación.
+                     Permite introducir un índice del 0 al 49 para utilizar
+                     una instancia independiente, útil para animar varios
+                     <b>Armatures</b> mediante un <b>Loop For Anims</b>.
+                </li>
+                <br>
+                <li><b>Make Transition:</b> Recibe un <b>Controller</b> 
+                    y devuelve una animación transición entre el estado 
+                    actual de dicho <b>Controller</b> y el inicio de otra 
+                    animación. Permite establecer la duración de la transición.
+                </li>
+                <br>
+                <h3 style="color:#B91C1C">Advertencia</h3>
+                <p>La animación de transición generada ocupa siempre un índice reservado de la lista global de animaciones (0) y
+                     el <b>Keyframe</b> que almacena el estado inicial de la transición utiliza el índice 10000 de la lista global de estos objetos.
+                     <br>
+                     <br>
+                     Por lo tanto: 
+                     <ul>
+                        <li>
+                            Por lo tanto: Una nueva ejecucion de <b>Make Transition</b> puede sobreescribir una transicion anterior.
+                        </li>
+                        <br>
+                        <li>
+                            Debe evitarse utilizar el <b>Keyframe</b> 10000 para otras animaciones, ya que podría ocasionar conflictos con el sistema de transiciones.
+                        </li>
+                    </ul>
+                </p>
+            </ul>
+            <br>
+            <b>Scripts de Edición:</b>
+            <br> <img src="Images/Anim-EditScripts.jpeg" class="Square"><br>
+            <ul>
+                <li><b>Set Init Pos:</b> Modifica la posición local y rotación 
+                    global inicial del objeto hijo asociado a un <b>Joint</b>.
+                </li>
+                <br>
+                <li><b>Edit Keyframe:</b> Autodescriptivo, permite modificar la duracion y 
+                    las listas de rotación y posición.
+                </li>
+                <br>
+                <li><b>Get Keyframe Def:</b> Permite consultar las listas y duración de un <b>Keyframe</b>.
+                </li>
+                <br>
+                <li><b>Get Time:</b> Recibiendo un <b>Controller</b>, devuelve 
+                    el tiempo actual de reproducción en segundos desde el inicio de la animación que gestiona en ese momento.
+                </li>
+            </ul>
+            <br>
+            <b>Scripts de Animación:</b>
+            <br> <img src="Images/Anim-AnimScripts.jpeg" class="Square"><br>
+            <ul>
+                <li><b>Set Time:</b> Establece el tiempo de reproducción del <b>Controller</b> en el segundo recibido como entrada.
+                </li>
+                <br>
+                <li><b>In Loop:</b> Configura el <b>Controller</b> para reproducir las animaciones en bucle, reiniciando su reproducción al acabar.
+                </li>
+                <br>
+                <li><b>Set Speed:</b> Modifica la velocidad de reproducción de un <b>Controller</b>, siendo 1 la velocidad normal.
+                </li>
+                <br>
+                <li><b>Play Animation:</b> Recibe un <b>Controller</b> y permite ejecutar una animación sobre un <b>Armature</b>. También permite definir un intervalo de mestreo entre fotogramas de la animación dentro de lo que Fancade permite. <br>
+                    (Por ejemplo, un intervalo de 1/20 pretende forzar la animación a actualizarse a 20 fps, aunque en Fancade no se pueda garantizar).
+                </li>
+            </ul>
+            <br>
+            <b>Scripts de Control:</b>
+            <br> <img src="Images/Anim-ControlScripts.jpeg" class="Square"><br>
+            <ul>
+                <li><b>Loop For Anims:</b> Ejecuta un bucle con una cantidad de iteraciones definida por el usuario, proporcionando una variable local para identificar cada iteración.
+                     Lo que ejecuta sucede durante el Late Update de Fancade y su función principal es permitir animar más de un <b>Armature</b> con un solo <b>Controller</b> y <b>Play Animation</b>.
+                </li>
+                <br>
+                <li><b>Animation Ended:</b> Permite ejecutar dos bloques de código diferentes dependiendo de si la animación gestionada por un <b>Controller</b> ha finalizado o continúa en ejecución.
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="Ejemplo">
+            <h3>Ejemplo guiado:</h3>
+            <p>A continuación, se presentarán los pasos para un ejemplo de animación en bucle y transición con este Kit.
+                <br>(Parecido al ejemplo en el nivel "Transition", pero mejor organizado).
+            </p>
+            <br>
+            <ol>
+                <li><b>Crear un Armature: </b>
+                    <br><br>
+                    Toda la creacíon de estructuras del Kit debe realizarse, preferentemente, durante la ejecución de un <b>Play Sensor</b>
+                    <br><img src="Images/RigExample-1.jpeg" class="Square"><br>
+                    Para comenzar, necesitamos un conjunto de objetos que conformarán nuestro esqueleto. Guardaremos únicamente aquellos que deseamos animar.
+                    <br>En este ejemplo, solo animaremos el brazo de un personaje.
+                    <br>
+                    <br><img src="Images/RigExample-2.jpeg" class="Square"><br>
+                    Para crear las uniones, utilizaremos el script <b>Create Joint</b>. De forma similar a como se crean las <b>Constraints</b> de Fancade, este nos permitirá establecer uniones entre objetos definiendo sus respectivos pivotes.
+                    <br><br>
+                    Para establecer la jerarquía del esqueleto, utilizamos <b>Joints</b> previamente creados como padres para las nuevas uniones.
+                    <br>
+                    <br><img src="Images/RigExample-3.jpeg" class="Square"><br>
+                    Para definir la pose inicial de los <b>Joints</b>, utilizaremos <b>Set Init Pos</b>, indicando la posición local respecto al pivote y la rotación global del objeto hijo.
+                    <br><br>
+                    Al mismo tiempo, almacenaremos cada <b>Joint</b> en una lista, que posteriormente usaremos para crear un <b>Armature</b> mediante el script <b>Create Armature</b> y que guardaremos para su uso posterior.
+                </li>
+                <br>
+                <li><b>Crear una Animación: </b>
+                    <br><img src="Images/RigExample-4.jpeg" class="Square"><br>
+                    Para construir una animación necesitamos por lo menos 2 <b>Keyframes</b>. Comenzaremos definiendo una lista de rotaciones (No animaremos posiciones asi que se omitirá la lista de posiciones) que utilizaremos para establecer la pose del fotograma. A su vez, les daremos un tiempo de duración y lo guardaremos en una lista de fotogramas.
+                    <br><br>
+                    Las listas de rotación y posición corresponden por índice a los <b>Joints</b> de la lista usada para crear un <b>Armature</b>
+                    <br>
+                    <br><img src="Images/RigExample-5.jpeg" class="Square"><br>
+                    Una vez creados por lo menos 2 <b>Keyframes</b>, cuya duracion total debe ser mayor a 1/30 de segundo, podremos usar la lista para generar una animacion válida.
+                    <br>Para esto utilizaremos <b>Create Animation</b> y guardaremos el resultado como <i>Animation 1</i>.
+                    <br>
+                    <br><img src="Images/RigExample-6.jpeg" class="Square"><br>
+                    Después, vamos a crear una segunda animación siguiendo el mismo proceso de antes, pero esta la almacenaremos como <i>Animation 2</i>.
+                    <br>Finalmente definimos en una variable <i>Anim</i> la animación que queremos ejecutar (en este caso la primera).
+                    <br>
+                    <br><img src="Images/RigExample-7.jpeg" class="Square"><br>
+                    Para animar el <b>Armature</b>, necesitaremos un <b>Anim Controller</b>> y utilizarlo en <b>Play Animation</b>.
+                    <br><br>
+                    Configuraremos este último indicvando nuestro Armature como objetivo, la variable Anim como animación a ejecutar y un intervalo de muestreo de 1/60, que intenta conseguir el efecto de ir a 60 fps dentro de lo que permite Fancade.
+                    <br><br>
+                    Finalmente, agregaremos un <b>In Loop</b> con su valor establecido en True para indicar que la animación debe reproducirse en bucle.
+                </li>
+                <br>
+                <li><b>Crear una Transición: </b>
+                    <br><img src="Images/RigExample-8.jpeg" class="Square"><br>
+                    Para solicitar una transición, usaremos <b>Make Transition</b> dentro de un evento de click.
+                    <br><br>
+                    Antes de ejecutarlo, comprobaremos el valor de una variable de control <i>Changed</i>, que representará si la transición ya fue solicitada, con el fin de evitar que se llame más de una vez.
+                    <br><b>Make Transition</b> recibira nuestro <b>Controller</b>, la animación de destino (en este caso <i>Animation 2</i>) y una duración de transición en segundos.
+                    <br>La animación resultante se guardara en <i>Anim</i> y estableceremos <i>Changed</i> como True.
+                    <br>
+                    <br><img src="Images/RigExample-9.jpeg" class="Square"><br>
+                    Debajo de nuestro código  de reproducción, agregaremos una comprobación que, cuando <i>Changed</i> sea True, verificará mediante <b>Anim Ended</b> si la transición ha finalizado.
+                    <br><br>
+                    Cuando esto ocurra, estableceremos <i>Animation 2</i> como la animaión actual en la variable <i>Anim</i> y utilizaremos <b>Set Time</b> para reiniciar su tiempo de reproducción a 0.
+                    <br><br>
+                    De esta manera, la segunda animación continuará reproduciendoce en bucle al acabar la transición.
+                </li>
+            </ol>
+        </div>
+        <div id="Res">
+            <h3>Nombres reservados</h3>
+            <p>Este kit, utiliza algunas variables globales para contener las estructuras en listas. A continuación se mencionarán por precausión o por si te resulta útil:</p>
+            <ul translate="no">
+                <p>Todas las variables empiezan con: "$CoAn"</p>
+                <br>
+                <li>$CoAnATimer - Tiempo de reproducción de un Controller (Usa Controller como índice)</li>
+                <br>
+                <li>$CoAnDuration - El tiempo total de una animación (Usa Animation como índice)</li>
+                <br>
+                <li>$CoAnGArmID - Representa la cuenta de Armatures</li>
+                <br>
+                <li>$CoAnGAnimID - Representa la cuenta de Animations</li>
+                <br>
+                <li>$CoAnGJoiID - Representa la cuenta de Joints</li>
+                <br>
+                <li>$CoAnGKfrID - Representa la cuenta de Keyframes</li>
+                <br>
+                <li>$CoAnIt - Representa la cuenta de Anim Controllers</li>
+                <br>
+                <li>$CoAnJoints - Contiene los ID de los Joints de un Armature, (Usa el Armature*50 + un número como índice)</li>
+                <br>
+                <li>$CoAnJointsCorr - Contiene la correspondencia entre la lista de Joints de un Armature y la misma lista pero ordenada (recibe los mismos indices que $CoAnJoints)</li>
+                <br>
+                <li>$CoAnKFTime - Contiene los tiempos de los Keyframes (Recibe Keyframe como índice)</li>
+                <br>
+                <li>$CoAnKeyframe - Contiene los Keyframes de una animación (Usa el Animation*100 + un número como índice)</li>
+                <br>
+                <li>$CoAnOrJoints - Contiene la lista de Joints ordenados por jerarquía de un Armature (Recibe los mismos indices que $CoAnJoints)</li>
+                <br>
+                <li>$CoAnParent - Contiene el Joint padre de un Joint (Recibe Joint como índice)</li>
+                <br>
+                <li>$CoAnSample - El tiempo que aumenta con cada muestreo y se compara con $CoAnATimer para decidir cuando actualizar la animación</li>
+                <br>
+                <li>$CoAnSpeed - Contiene la velocidad configurada de un Controller (Recibe Controller como índice)</li>
+                <br>
+                <li>$CoAnTimeMarks - Contiene las marcas de tiempo de Keyframes en una animación (Recibe los mismos índices que $CoAnKeyframe)</li>
+                <br>
+                <li>$CoAnUpdateTime - Representa el intervalo de muestreo actual de un Controller (Recibe Controller como índice)</li>
+                <br>
+                <li>$CoAnContPos - Representa el estado de posición actual de una animación (Recibe Controller*50 + un número como índice)</li>
+                <br>
+                <li>$CoAnInitPos - Contiene la posicion in inicial de un Joint (Recibe Joint como índice)</li>
+                <br>
+                <li>$CoAnOffsets - Contiene las posiciones que dicta un Keyframe (Recibe Keyframe*50 + un número como índice)</li>
+                <br>
+                <li>$CoAnPivots - Contiene la posición del pivote en una Joint (Recibe Joint como índice)</li>
+                <br>
+                <li>$CoAnAngles - Contiene las rotaciones que dicta un Keyframe (Recibe los mismos índices que $CoAnOffsets)</li>
+                <br>
+                <li>$CoAnContRots - Representa el estado de rotación actual de una animación (Recibe los mismo índices que $CoAnContPos)</li>
+                <br>
+                <li>$CoAnInitRot - Contiene la rotación inicial de un Joint (Recibe Joint como índice)</li>
+                <br>
+                <li>$CoAnObjs - Contiene el objeto hijo en un Joint (Recibe Joint como índice)</li>
+                <br>
+                <li>$CoAnParents - Contiene el objeto padre en un Joint (Recibe Joint como índice)</li>
+                <br>
+                <li>$CoAnFinished - Representa si ha finalizado una animación (Recibe Controller como índice)</li>
+                <br>
+                <li>$CoAnLoop - Representa si un Controller ejecuta en bucle la animación (Recibe Controller como índice)</li>
+            </ul>
+        </div>
+        <br>
+        <br>
+        <div id="Pie" style="background: linear-gradient(#DC2626, #B91C1C);">
+            <h3 style="color: white;">¡Gracias por leer! Espero que este kit te sea de utilidad para algún proyecto que tengas en mente, a pesar de sus limitaciones...
+            <br>¡Diviertete creando! :D
+            </h3>
+            <b style="color: white;">— Elmini/Juegos Random</b>
+        </div>
+    </body>
+</html>
